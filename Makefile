@@ -5,7 +5,8 @@ SOURCES = main.cpp \
           utils\Vector.cpp \
 		  spacecraft_motion\modeling\AbstractSolver.cpp \
 		  spacecraft_motion\modeling\RK4Solver.cpp \
-		  spacecraft_motion\system\SpacecraftGreenwichCS.cpp
+		  spacecraft_motion\system\SpacecraftGreenwichCS.cpp \
+		  spacecraft_motion\system\SpacecraftEquatorialCS.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
