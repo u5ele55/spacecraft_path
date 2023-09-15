@@ -1,8 +1,8 @@
-#include "SpacecraftEquatorialCS.hpp"
+#include "SpacecraftECI.hpp"
 
 #include <cmath>
 
-SpacecraftEquatorialCS::SpacecraftEquatorialCS(double mu, double omega, const Vector &initialPosition, const Vector &initialSpeed)
+SpacecraftECI::SpacecraftECI(double mu, double omega, const Vector &initialPosition, const Vector &initialSpeed)
     : mu(mu), omega(omega), initialState(6)
 {
     for (int i = 0; i < 3; i ++) {
@@ -11,7 +11,7 @@ SpacecraftEquatorialCS::SpacecraftEquatorialCS(double mu, double omega, const Ve
     }
 }
 
-void SpacecraftEquatorialCS::f(Vector &state) const {
+void SpacecraftECI::f(Vector &state) const {
     double 
         vx = state[0], x = state[1], 
         vy = state[2], y = state[3], 
@@ -29,6 +29,6 @@ void SpacecraftEquatorialCS::f(Vector &state) const {
 }
 
 // [vx, x, vy, y, vz, z]
-Vector SpacecraftEquatorialCS::getInitialState() const {
+Vector SpacecraftECI::getInitialState() const {
     return initialState;
 }

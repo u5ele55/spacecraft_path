@@ -6,14 +6,14 @@ SOURCES = main.cpp \
 		  spacecraft_motion\modeling\AbstractSolver.cpp \
 		  spacecraft_motion\modeling\RK4Solver.cpp \
 		  spacecraft_motion\system\SpacecraftGreenwichCS.cpp \
-		  spacecraft_motion\system\SpacecraftEquatorialCS.cpp
+		  spacecraft_motion\system\SpacecraftECI.cpp
 
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = $(SOURCES:.cpp=.o) $(SOFA_OBS)
 
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(OBJECTS) -o $@ $(SFML_FLAGS)
+	$(CC) $(OBJECTS) -o $@ 
 
 .cpp.o:
 	$(CC) -c $< -o $@
