@@ -24,7 +24,6 @@ int main() {
     std::ofstream stream("out.txt");
 
     // sofa: eci -> ecef | use c2t06a 
-
     for (int i = 0; i < 40000; i ++) {
         double time = i;
         auto state = solver.solve(time);
