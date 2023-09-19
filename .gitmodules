@@ -1,0 +1,3 @@
+[submodule "libs/sofa"]
+	path = libs/sofa
+	url = https://github.com/tudat-team/sofa-cmake
