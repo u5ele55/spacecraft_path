@@ -11,4 +11,4 @@ public:
 private:
     Vector blh;
     double angle;
-};
+}; 

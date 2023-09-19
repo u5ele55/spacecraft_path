@@ -12,6 +12,7 @@ namespace Constants
     namespace Common
     {
         const double G = 6.67430e-11;
+        const double SECONDS_IN_DAY = 86400;
     } // namespace Common
     
 } // namespace Constants
