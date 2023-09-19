@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
-project (spacecraft_path)
+project(spacecraft_path)
+
+add_subdirectory(libs/sofa)
 
 add_executable(run 
     main.cpp
@@ -9,3 +11,5 @@ add_executable(run
     spacecraft_motion/system/SpacecraftGreenwichCS.cpp
     spacecraft_motion/system/SpacecraftECI.cpp
     )
+
+target_link_libraries(run PRIVATE sofa)

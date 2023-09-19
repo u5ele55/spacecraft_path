@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "sofa/sofa.h"
+
 #include "utils/Vector.hpp"
 #include "utils/constants.hpp"
 
@@ -19,11 +21,16 @@ int main() {
         Constants::Earth::ANGULAR_SPEED, 
         initialPosition, initialSpeed);
 
-    RK4Solver solver(system);
+    RK4Solver solver(system); 
     
     std::ofstream stream("out.txt");
 
     // sofa: eci -> ecef | use c2t06a 
+
+    double a = iauEo06a ( 12, 32 ); //SOFA WORKS!
+
+    std::cout << a << '\n';
+
     for (int i = 0; i < 40000; i ++) {
         double time = i;
         auto state = solver.solve(time);
