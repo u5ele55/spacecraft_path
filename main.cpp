@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 
+#include <chrono>
+#include <ctime>
+
 #include "sofa/sofa.h"
 
 #include "utils/Vector.hpp"
@@ -37,16 +40,33 @@ Vector TTUT(Vector currentTime) {
     return {TT1, TT2, UT11, UT12};
 }
 
+Vector secsToTime(long long secs) {
+    using namespace std::chrono;
+
+    system_clock::time_point tp{seconds{secs}};
+    time_t tt = system_clock::to_time_t(tp);
+    tm utc_tm = *gmtime(&tt);
+
+    Vector time = {
+        (double)utc_tm.tm_year + 1900,
+        (double)utc_tm.tm_mon + 1,
+        (double)utc_tm.tm_mday,
+        (double)utc_tm.tm_hour,
+        (double)utc_tm.tm_min,
+        (double)utc_tm.tm_sec,
+        0
+    };
+    time[6] = (
+        (time[3] * 60 + time[4]) * 60 + time[5]
+        ) / Constants::Common::SECONDS_IN_DAY;
+
+    return time;
+}
+
 int main() {
     const double JD = 2460206.883;
+    
     Vector currentTime(7);
-    currentTime[0] = 2023; // year
-    currentTime[1] = 9; // month
-    currentTime[2] = 17; // day
-    currentTime[3] = 13; // hours
-    currentTime[4] = 23; // minutes
-    currentTime[5] = 43; // seconds
-    currentTime[6] = ((currentTime[3] * 60 + currentTime[4]) * 60 + currentTime[5]) / Constants::Common::SECONDS_IN_DAY; // day fraction
     //ecef - 7144843.808, 217687.110, -506463.296        562.650611, -1616.516697, 7358.157263
     //eci - 2937656.611, 14432705.729, -20836304.223        -2408.799, 2723.781, 1545.981
     Vector initialPosition = {2937656.611, 14432705.729, -20836304.223};
@@ -61,35 +81,18 @@ int main() {
     
     std::ofstream stream("out.txt");
 
-    
-    // sofa: eci -> ecef | use c2t06a 
     double rotateMatrix[3][3];
-
+    
     double step = 100;
     for (int i = 0; i < 40000; i += step) {
         double time = i;
         auto state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
-        
-        currentTime[5] += step;
-        currentTime[6] += step / Constants::Common::SECONDS_IN_DAY;
-        int dmin = currentTime[5] / 60;
-        if (dmin) {
-            currentTime[4] += dmin;
-            currentTime[5] = (int)currentTime[5] % 60;
-            int dhour = currentTime[4] / 60;
-            if (dhour) {
-                currentTime[3] += dhour;
-                currentTime[4] = (int)currentTime[4] % 60;
-                int dday = currentTime[3] / 24;
-                if (dday) {
-                    currentTime[2] += dday;
-                    currentTime[3] = (int)currentTime[3] % 24;
-                    currentTime[6] -= dday;
-                }
-            }
-        }
+        long long t = i + 1695371113;
+
+        currentTime = secsToTime(t);
         Vector ttut = TTUT(currentTime);
+        
         iauC2t06a(ttut[0], ttut[1], ttut[2], ttut[3], 0, 0, rotateMatrix);
         Vector geodetic = {
             x * rotateMatrix[0][0] + y * rotateMatrix[1][0] + z * rotateMatrix[2][0],
