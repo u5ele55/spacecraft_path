@@ -32,7 +32,13 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
             double angle = M_PI_2 - acos(cosAngle);
             if (angle < rdts[rInd].getAngle()) {
                 // could be seen!
-                
+                double azimuth = 0; // TODO 
+                designations.push_back({
+                    (double)rInd, 
+                    sqrt(distanceSqr),
+                    azimuth,
+                    angle
+                });
             }
         }
     }
