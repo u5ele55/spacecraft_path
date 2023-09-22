@@ -14,6 +14,7 @@ add_executable(run
     spacecraft_motion/system/SpacecraftECI.cpp
     radiotelescope/TelescopeCreator.cpp
     radiotelescope/RadioTelescope.cpp
+    radiotelescope/RadioTelescopeSystem.cpp
     )
 
 target_link_libraries(run PRIVATE sofa)

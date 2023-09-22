@@ -1,8 +1,10 @@
 
 import matplotlib.pyplot as plt
 
-file = open(r"out.txt", 'r')
-data = file.read().split('\n')
+fileTrajectory = open(r"trajectory.txt", 'r')
+fileTelescopes = open(r"telescopes.txt", 'r')
+data = fileTrajectory.read().split('\n')
+dataTelescopes = fileTelescopes.read().split('\n')
 
 xs,ys,zs = [], [], []
 xd,yd,zd = [], [], []
@@ -10,17 +12,17 @@ xr,yr,zr = [], [], []
 ax = plt.figure(1).add_subplot(projection='3d')
 cnt = 0
 
-N = int(data[0])
+N = int(dataTelescopes[0])
 
 for i in range(1,N+1):
-    x,y,z = [float(a) for a in data[i][1:-1].split()]
+    x,y,z = [float(a) for a in dataTelescopes[i][1:-1].split()]
     xr.append(x)
     yr.append(y)
     zr.append(z)
 
 enable_eci = True
 
-for c in data[N+1:-1]:
+for c in data[:-1]:
     x,y,z = [float(a) for a in c.split()]
     if not enable_eci or cnt % 2:
         xd.append(x)
