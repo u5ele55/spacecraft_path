@@ -1,0 +1,7 @@
+2
+0 0 0 30
+30 45 1 45
+
+# Format : 
+# N - quantity of radiotelescopes
+# In next N lines : B L H angle

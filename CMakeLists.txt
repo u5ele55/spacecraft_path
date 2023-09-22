@@ -6,10 +6,13 @@ add_subdirectory(libs/sofa)
 add_executable(run 
     main.cpp
     utils/Vector.cpp
+    utils/time.cpp
     spacecraft_motion/modeling/AbstractSolver.cpp
     spacecraft_motion/modeling/RK4Solver.cpp
     spacecraft_motion/system/SpacecraftGreenwichCS.cpp
     spacecraft_motion/system/SpacecraftECI.cpp
+    radiotelescope/TelescopeCreator.cpp
+    radiotelescope/RadioTelescope.cpp
     )
 
 target_link_libraries(run PRIVATE sofa)
