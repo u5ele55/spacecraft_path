@@ -44,7 +44,7 @@ int main() {
     double rotateMatrix[3][3];
     
     double step = 100;
-    for (int i = 0; i < 40000; i += step) {
+    for (int i = 0; i < 80000; i += step) {
         double time = i;
         auto state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
@@ -59,7 +59,7 @@ int main() {
             x * rotateMatrix[0][1] + y * rotateMatrix[1][1] + z * rotateMatrix[2][1],
             x * rotateMatrix[0][2] + y * rotateMatrix[1][2] + z * rotateMatrix[2][2]
         };
-        //stream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
+        stream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
         stream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
     }
 
