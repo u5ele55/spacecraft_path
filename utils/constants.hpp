@@ -6,8 +6,11 @@ namespace Constants
 {
     namespace Earth
     {
-        const double ANGULAR_SPEED = M_PI / 43200; // 2pi / T (T = 24hrs = 86400secs)
-        const double MASS = 5.9742e24; 
+        // 2pi / T (T = 24hrs = 86400secs)
+        const double ANGULAR_SPEED = M_PI / 43200; // rad/sec
+        const double MASS = 5.9742e24;
+        const double MAJOR_AXIS = 6378137; // in meters
+        const double MINOR_AXIS = 6356752.3142; // in meters
     } // namespace Earth
     namespace Common
     {

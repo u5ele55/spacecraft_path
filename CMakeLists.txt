@@ -7,6 +7,7 @@ add_executable(run
     main.cpp
     utils/Vector.cpp
     utils/time.cpp
+    utils/coordinates.cpp
     spacecraft_motion/modeling/AbstractSolver.cpp
     spacecraft_motion/modeling/RK4Solver.cpp
     spacecraft_motion/system/SpacecraftGreenwichCS.cpp

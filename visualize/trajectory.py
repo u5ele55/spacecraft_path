@@ -2,15 +2,27 @@
 import matplotlib.pyplot as plt
 
 file = open(r"out.txt", 'r')
-coords = file.read().split('\n')
+data = file.read().split('\n')
 
 xs,ys,zs = [], [], []
 xd,yd,zd = [], [], []
-ax = plt.figure().add_subplot(projection='3d')
+xr,yr,zr = [], [], []
+ax = plt.figure(1).add_subplot(projection='3d')
 cnt = 0
-for c in coords[:-1]:
+
+N = int(data[0])
+
+for i in range(1,N+1):
+    x,y,z = [float(a) for a in data[i][1:-1].split()]
+    xr.append(x)
+    yr.append(y)
+    zr.append(z)
+
+enable_eci = False
+
+for c in data[N+1:-1]:
     x,y,z = [float(a) for a in c.split()]
-    if cnt % 2:
+    if not enable_eci or cnt % 2:
         xd.append(x)
         yd.append(y)
         zd.append(z)
@@ -20,20 +32,22 @@ for c in coords[:-1]:
         zs.append(z)
     cnt += 1
 
-ax.plot(xs, ys, zs, label='SC trajectory eci')
+#ax.plot(xs, ys, zs, label='SC trajectory eci')
 ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#FF0000')
 
 import numpy as np
 
 # sphere
 u, v = np.mgrid[0:2 * np.pi:30j, 0:np.pi:20j]
-R = 6.371e6
-x_r = R * np.cos(u) * np.sin(v)
-y_r = R * np.sin(u) * np.sin(v)
-z_r = R * np.cos(v)
+MAJOR_AXIS = 6378137; 
+MINOR_AXIS = 6356752.3142; 
+x_r = MAJOR_AXIS * np.cos(u) * np.sin(v)
+y_r = MAJOR_AXIS * np.sin(u) * np.sin(v)
+z_r = MINOR_AXIS * np.cos(v)
 
-ax.plot_surface(x_r, y_r, z_r, cmap=plt.cm.YlGnBu_r)
+ax.plot_surface(x_r, y_r, z_r, cmap=plt.cm.YlGnBu_r, alpha=0.6)
 # trasse
+tr = plt.figure(2)
 xs = np.array(xs)
 ys = np.array(ys)
 zs = np.array(zs)
@@ -45,6 +59,9 @@ alpha = 1/298.257
 phi = np.arcsin(zs / np.sqrt((1-alpha)**2 * r1**2 + z**2))
 lmbd = np.arctan(ys/xs)
 
-plt.plot(lmbd, phi)
+# radiotelescopes
+ax.scatter(xr, yr, zr, c='#FF0000', s=35, marker='o', alpha=1)
+
+#plt.plot(lmbd, phi)
 
 plt.show()

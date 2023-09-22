@@ -6,6 +6,7 @@
 #include "utils/Vector.hpp"
 #include "utils/constants.hpp"
 #include "utils/time.hpp"
+#include "utils/coordinates.hpp"
 
 #include "spacecraft_motion/system/SpacecraftGreenwichCS.hpp"
 #include "spacecraft_motion/system/SpacecraftECI.hpp"
@@ -16,6 +17,7 @@
 
 int main() {
     const double JD = 2460206.883;
+    const double unixTimestamp = (JD - 2440587.5) * 86400.0;
     
     Vector currentTime(7);
     //ecef - 7144843.808, 217687.110, -506463.296        562.650611, -1616.516697, 7358.157263
@@ -29,11 +31,15 @@ int main() {
         initialPosition, initialSpeed);
     RK4Solver solver(system); 
 
+    
+    std::ofstream stream("out.txt");
+    
+    // output radiotelescopes coords
     TelescopeCreator rdtCreator("../radiotelescopes.txt");
     std::vector<RadioTelescope> rdts = rdtCreator.create();
-    std::cout << rdts[1].getBLH()<< '\n';
-
-    std::ofstream stream("out.txt");
+    stream << rdts.size() << '\n';
+    for (int i = 0; i < rdts.size(); i ++)
+        stream << blh2ecef( rdts[i].getBLH() )<< '\n';
 
     double rotateMatrix[3][3];
     
@@ -42,19 +48,19 @@ int main() {
         double time = i;
         auto state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
-        long long t = i + 1695371113;
+        long long t = i + unixTimestamp;
 
         currentTime = secsToTime(t);
         Vector ttut = TTUT(currentTime);
         
         iauC2t06a(ttut[0], ttut[1], ttut[2], ttut[3], 0, 0, rotateMatrix);
-        Vector geodetic = {
+        Vector ecef = {
             x * rotateMatrix[0][0] + y * rotateMatrix[1][0] + z * rotateMatrix[2][0],
             x * rotateMatrix[0][1] + y * rotateMatrix[1][1] + z * rotateMatrix[2][1],
             x * rotateMatrix[0][2] + y * rotateMatrix[1][2] + z * rotateMatrix[2][2]
         };
-        stream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
-        stream << geodetic[0] <<" "<< geodetic[1] <<" "<< geodetic[2] << '\n';
+        //stream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
+        stream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
     }
 
     delete system;
