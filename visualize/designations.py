@@ -10,20 +10,23 @@ class DesignationsDrawer:
         filedata = self.file.read().split('\n')
         
         data = {}
-        place_was = []
         t_group = None
+
+        def append(id, t,dist,azm,ang):
+            data[id]['time'].append(t)
+            data[id]['dist'].append(dist)
+            data[id]['azimuth'].append(azm)
+            data[id]['angle'].append(ang)
 
         for line in filedata[1:-1]:
             t,id,dist,azm,ang = [float(a) for a in line.split('\t')]
             
             id = int(id)
             if id not in data:
-                data[id] = {'time': [], 'dist': [], 'azimuth': [], 'angle': [], 'was': False}
+                data[id] = {'time': [], 'dist': [], 'azimuth': [], 
+                            'angle': [], 'was': False}
             if not data[id]['was']:
-                data[id]['time'].append(np.nan)
-                data[id]['dist'].append(np.nan)
-                data[id]['azimuth'].append(np.nan)
-                data[id]['angle'].append(np.nan)
+                append(id, *[np.nan]*4)
             if len(data[id]['time']) > 2 and \
                 abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 0.1:
                 data[id]['azimuth'][-1] = np.nan
@@ -32,10 +35,7 @@ class DesignationsDrawer:
                     if data[_id]['time'][-1] != t_group:
                         data[_id]['was'] = False
                 t_group = t
-            data[id]['time'].append(t)
-            data[id]['dist'].append(dist)
-            data[id]['azimuth'].append(azm)
-            data[id]['angle'].append(ang)
+            append(id, t,dist,azm,ang)
             data[id]['was'] = True
         
         for id in data:
