@@ -1,6 +1,7 @@
 # Custom
 out.txt
 /.vscode
+*/__pycache__/
 
 # CMake generated files
 build/
