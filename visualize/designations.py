@@ -18,22 +18,26 @@ class DesignationsDrawer:
             
             id = int(id)
             if id not in data:
-                data[id] = {'time': [], 'dist': [], 'azimuth': [], 'angle': [], 'was': True}
+                data[id] = {'time': [], 'dist': [], 'azimuth': [], 'angle': [], 'was': False}
             if not data[id]['was']:
                 data[id]['time'].append(np.nan)
                 data[id]['dist'].append(np.nan)
                 data[id]['azimuth'].append(np.nan)
                 data[id]['angle'].append(np.nan)
+            if len(data[id]['time']) > 2 and \
+                abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 3:
+                data[id]['azimuth'][-1] = np.nan
             if t != t_group:
-                t_group = t
                 for _id in data:
-                    data[_id]['was'] = False
+                    if data[_id]['time'][-1] != t_group:
+                        data[_id]['was'] = False
+                t_group = t
             data[id]['time'].append(t)
             data[id]['dist'].append(dist)
             data[id]['azimuth'].append(azm)
             data[id]['angle'].append(ang)
             data[id]['was'] = True
-        print(data.keys())
+        
         for id in data:
             t = data[id]['time']
             fig, axs = plt.subplots(3, sharex=True)
