@@ -56,7 +56,7 @@ int main() {
     double rotateMatrix[3][3];
     
     double step = 100;
-    for (int i = 0; i < 20000; i += step) {
+    for (int i = 0; i < 80000; i += step) {
         double time = i;
         auto state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];

@@ -25,7 +25,7 @@ class DesignationsDrawer:
                 data[id]['azimuth'].append(np.nan)
                 data[id]['angle'].append(np.nan)
             if len(data[id]['time']) > 2 and \
-                abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 3:
+                abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 0.1:
                 data[id]['azimuth'][-1] = np.nan
             if t != t_group:
                 for _id in data:
