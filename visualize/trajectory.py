@@ -12,7 +12,6 @@ class TrajectoryDrawer:
         self.drawTrasse = True
 
     def draw(self, ax):
-        print('draw')
         data = self.fileTrajectory.read().split('\n')
         xs,ys,zs = [], [], []
         xd,yd,zd = [], [], []
