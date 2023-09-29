@@ -4,6 +4,7 @@
 #include "../utils/constants.hpp"
 
 #include <cmath>
+#include <iostream>
 
 RadioTelescopeSystem::RadioTelescopeSystem(std::vector<RadioTelescope> radiotelescopes)
     : rdts(radiotelescopes)
@@ -25,6 +26,7 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
         if (distanceSqr < maxDistanceSqr) {
             // find angle between RT plane and vector between RT and satellite
             double cosAngle = r.dot(rtCoord) / sqrt(r.dot(r) * rtCoord.dot(rtCoord));
+            // std::cout << "cos: " << cosAngle << '\n';
             if (cosAngle < 0) {
                 continue;
             }
@@ -42,5 +44,5 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
             }
         }
     }
-    return std::vector<Vector>();
+    return designations;
 }

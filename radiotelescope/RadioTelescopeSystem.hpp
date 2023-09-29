@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RadioTelescope.hpp"
+#include "../output/RadioVisibilityZones.hpp"
 
 #include <vector>
 

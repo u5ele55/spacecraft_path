@@ -16,6 +16,8 @@
 #include "radiotelescope/TelescopeCreator.hpp"
 #include "radiotelescope/RadioTelescopeSystem.hpp"
 
+#include "output/RadioVisibilityZones.hpp"
+#include "output/RadioStationsDesignations.hpp"
 
 int main() {
     const double JD = 2460206.883;
@@ -36,7 +38,9 @@ int main() {
     
     std::ofstream trajectoryStream("trajectory.txt");
     std::ofstream radiotelescopesStream("telescopes.txt");
-    std::ofstream testStream("test.txt");
+    
+    Output::RadioVisibilityZones rvz("radiozones.txt");
+    Output::RadioStationsDesignations rsd("designations.txt");
     
     // output radiotelescopes coords
     TelescopeCreator rdtCreator("../radiotelescopes.txt");
@@ -52,7 +56,7 @@ int main() {
     double rotateMatrix[3][3];
     
     double step = 100;
-    for (int i = 0; i < 40000; i += step) {
+    for (int i = 0; i < 20000; i += step) {
         double time = i;
         auto state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
@@ -71,7 +75,18 @@ int main() {
         trajectoryStream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
 
         auto designations = radioSystem.targetTelescopes(ecef);
+        if (!designations.empty()) {
+            rvz.setTime(currentTime);
+            for (const auto& des : designations) {
+                rvz.addToZone(des[0]);
+                rsd.output(i, des);
+            }
+            rvz.output();
+
+        }
     }
+
+    std::cout << "Endtime: " << currentTime << '\n';
 
     delete system;
  

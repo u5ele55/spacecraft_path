@@ -15,6 +15,8 @@ add_executable(run
     radiotelescope/TelescopeCreator.cpp
     radiotelescope/RadioTelescope.cpp
     radiotelescope/RadioTelescopeSystem.cpp
+    output/RadioVisibilityZones.cpp
+    output/RadioStationsDesignations.cpp
     )
 
 target_link_libraries(run PRIVATE sofa)

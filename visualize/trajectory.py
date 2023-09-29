@@ -34,6 +34,17 @@ for c in data[:-1]:
         zs.append(z)
     cnt += 1
 
+# Scaling
+to_all = lambda f, ar1, ar2, ar3: f(f(ar1), f(ar2), f(ar3))
+
+l = to_all(min, xd, yd, zd)
+u = to_all(max, xd, yd, zd)
+
+ax.set_xlim3d(l, u)
+ax.set_ylim3d(l, u)
+ax.set_zlim3d(l, u)
+
+
 #ax.plot(xs, ys, zs, label='SC trajectory eci')
 ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#FF0000')
 
