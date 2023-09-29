@@ -64,7 +64,6 @@ double RadioTelescopeSystem::calculateAzimuth(Vector r_sat, Vector r_st)
     double cosNormCross = l_pCrossNorth.dot(normalVector) / sqrt(l_pCrossNorth.dot(l_pCrossNorth));
 
     double azimuth = cosNormCross > 0 ? acos(cosAzimuth) : 2*M_PI - acos(cosAzimuth);
-    std::cout << cosNormCross << " " << cosAzimuth << ' ' << azimuth << '\n';
 
     return azimuth;
 }

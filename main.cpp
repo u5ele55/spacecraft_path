@@ -82,7 +82,6 @@ int main() {
                 rsd.output(i, des);
             }
             rvz.output();
-
         }
     }
 
