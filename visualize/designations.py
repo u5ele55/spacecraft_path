@@ -48,3 +48,9 @@ class DesignationsDrawer:
             axs[1].set_title("Azimuth")
             axs[2].plot(t, data[id]['angle'])
             axs[2].set_title("Angle")
+
+            axs[0].set(ylabel='meters')
+            axs[1].set(ylabel='radians')
+            axs[2].set(ylabel='radians')
+
+            axs[2].set(xlabel='time')
