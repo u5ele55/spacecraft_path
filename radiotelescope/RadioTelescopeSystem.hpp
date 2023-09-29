@@ -12,4 +12,6 @@ public:
 private:
     std::vector<RadioTelescope> rdts;
     std::vector<Vector> rdtsECEF;
+private:
+    double calculateAzimuth(Vector r_sat, Vector r_st);
 };

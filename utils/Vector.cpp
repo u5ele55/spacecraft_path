@@ -72,6 +72,21 @@ double Vector::dot(const Vector &other) const {
     return res;
 }
 
+Vector Vector::cross(const Vector &other) const
+{
+    if (size() != 3) {
+        throw std::runtime_error("Vector::cross: Only 3-dim vectors allowed");
+    } 
+    double ax = at(0), ay = at(1), az = at(2);
+    double bx = other.at(0), by = other.at(1), bz = other.at(2);
+
+    return {
+        ay*bz - by*az,
+        az*bx - bz*ax,
+        ax*by - bx*ay
+    };
+}
+
 void Vector::resize(int newN){
     auto *newData = new double[newN];
     for (int i = 0; i < this->n; i++) {

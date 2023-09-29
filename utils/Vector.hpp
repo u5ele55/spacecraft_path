@@ -52,6 +52,8 @@ public:
      * */
     double dot(const Vector &other) const;
 
+    Vector cross(const Vector &other) const;
+
     void resize(int newN);
 
     friend std::ostream &operator<<(std::ostream &stream, const Vector &vec);

@@ -34,7 +34,7 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
             double angle = M_PI_2 - acos(cosAngle);
             if (angle < rdts[rInd].getAngle()) {
                 // could be seen!
-                double azimuth = 0; // TODO 
+                double azimuth = calculateAzimuth(ecef, rtCoord); // TODO 
                 designations.push_back({
                     (double)rInd, 
                     sqrt(distanceSqr),
@@ -45,4 +45,26 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
         }
     }
     return designations;
+}
+
+double RadioTelescopeSystem::calculateAzimuth(Vector r_sat, Vector r_st)
+{
+    // Normal vector to station plane
+    auto normalVector = r_st * (1 / sqrt(r_st.dot(r_st)));
+
+    double k = normalVector.dot(r_sat - r_st);
+
+    // Projection of satellite on a station plane
+    auto l_p = r_sat - normalVector*k;
+    Vector north = {0,0,1};
+
+    double cosAzimuth = l_p[2] / sqrt(l_p.dot(l_p));
+
+    auto l_pCrossNorth = l_p.cross(north);
+    double cosNormCross = l_pCrossNorth.dot(normalVector) / sqrt(l_pCrossNorth.dot(l_pCrossNorth));
+
+    double azimuth = cosNormCross > 0 ? acos(cosAzimuth) : 2*M_PI - acos(cosAzimuth);
+    std::cout << cosNormCross << " " << cosAzimuth << ' ' << azimuth << '\n';
+
+    return azimuth;
 }
