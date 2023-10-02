@@ -21,7 +21,7 @@
 
 int main() {
     const double JD = 2460206.883;
-    const double unixTimestamp = (JD - 2440587.5) * 86400.0;
+    const double unixTimestamp = (JD - 2440587.5) * Constants::Common::SECONDS_IN_DAY;
     
     Vector currentTime(7);
     //ecef - 7144843.808, 217687.110, -506463.296        562.650611, -1616.516697, 7358.157263
