@@ -3,3 +3,4 @@
 
 Vector secsToTime(long long secs);
 Vector TTUT(Vector currentTime);
+long long dateToSecs(Vector time);

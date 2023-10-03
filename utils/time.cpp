@@ -6,21 +6,13 @@
 #include <chrono>
 #include <ctime>
 
+#include <iostream>
+
 Vector TTUT(Vector currentTime) {
     double delta;
     iauDat (currentTime[0], currentTime[1], currentTime[2], currentTime[6], &delta);
-
-    Vector currentTT = {
-        currentTime[0], 
-        currentTime[1], 
-        currentTime[2],
-        0,0,0,
-        currentTime[6] + (delta + 32.184) / Constants::Common::SECONDS_IN_DAY
-    };
-    currentTT[3] = (int)(currentTT[6] * 24);
-    currentTT[4] = (currentTT[6] * 24.0 - currentTT[3]) * 60;
-    currentTT[5] = (int)((currentTT[4] - (int)(currentTT[4])) * 60);
-    currentTT[4] = (int)currentTT[4];
+    auto shifted = dateToSecs(currentTime) + + (delta + 32.184);
+    Vector currentTT = secsToTime(shifted);
 
     double TT1, TT2, UT1, UT2;
 
@@ -54,4 +46,20 @@ Vector secsToTime(long long secs) {
         ) / Constants::Common::SECONDS_IN_DAY;
 
     return time;
+}
+
+long long dateToSecs(Vector time) {
+    std::tm dt;
+    dt.tm_year = time[0] - 1900;
+    dt.tm_mon  = time[1] - 1;
+    dt.tm_mday = time[2];
+    dt.tm_hour = time[3];
+    dt.tm_min  = time[4];
+    dt.tm_sec  = time[5];
+    dt.tm_isdst = 0; // Not daylight saving
+ 
+    std::time_t t = mktime(&dt); // Это "локальное время"
+    std::tm dt2 = *std::gmtime(&t);
+
+    return t + 3*60*60;
 }
