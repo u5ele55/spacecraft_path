@@ -53,23 +53,17 @@ int main() {
         radiotelescopesStream << blh2ecef( rdts[i].getBLH() ) << '\n';
     }
 
-    double rotateMatrix[3][3];
+    std::cout << "Start time: " << secsToTime(unixTimestamp) << '\n';
+    
     double step = 100;
-
     for (int i = 0; i < 60001; i += step) {
         double time = i;
-        auto state = solver.solve(time);
+        Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
         long long t = i + unixTimestamp;
-        currentTime = secsToTime(t);
-        Vector ttut = TTUT(currentTime);
 
-        iauC2t06a(ttut[0], ttut[1], ttut[2], ttut[3], 0, 0, rotateMatrix);
-        Vector ecef = {
-            x * rotateMatrix[0][0] + y * rotateMatrix[1][0] + z * rotateMatrix[2][0],
-            x * rotateMatrix[0][1] + y * rotateMatrix[1][1] + z * rotateMatrix[2][1],
-            x * rotateMatrix[0][2] + y * rotateMatrix[1][2] + z * rotateMatrix[2][2]
-        };
+        currentTime = secsToTime(t);
+        Vector ecef = eci2ecef(x,y,z, currentTime);
         
         trajectoryStream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
         trajectoryStream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
