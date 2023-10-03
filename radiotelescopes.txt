@@ -1,7 +1,7 @@
 3
-30 45 1 45
-0 0 0 20
-30 0 1 90
+30 45 1 7
+0 0 0 7
+30 0 1 7
 
 # Format : 
 # N - quantity of radiotelescopes

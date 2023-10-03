@@ -33,7 +33,7 @@ int main() {
         Constants::Earth::MASS * Constants::Common::G, 
         Constants::Earth::ANGULAR_SPEED, 
         initialPosition, initialSpeed);
-    RK4Solver solver(system); 
+    RK4Solver solver(system, 30); 
 
     
     std::ofstream trajectoryStream("trajectory.txt");

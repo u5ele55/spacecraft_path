@@ -37,7 +37,7 @@ class TrajectoryDrawer:
         ax.set_ylim3d(l, u)
         ax.set_zlim3d(l, u)
 
-        ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#FF0000')
+        ax.plot(xs, ys, zs, label='SC trajectory ecef', c='#FF0000')
 
         # trasse
 

@@ -31,8 +31,8 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
                 continue;
             }
             // acos is an angle between vector and plane
-            double angle = M_PI_2 - acos(cosAngle);
-            if (angle < rdts[rInd].getAngle()) {
+            double angle = acos(cosAngle);
+            if (angle > rdts[rInd].getAngle()) {
                 // could be seen!
                 double azimuth = calculateAzimuth(ecef, rtCoord); // TODO 
                 designations.push_back({
