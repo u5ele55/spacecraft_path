@@ -30,12 +30,11 @@ int main() {
     Vector initialSpeed = {-2408.799, 2723.781, 1545.981};
 
     auto *system = new SpacecraftECI(
-        Constants::Earth::MASS * Constants::Common::G, 
+        Constants::Earth::GEOCENTRIC_GRAVITATION_CONSTANT,
         Constants::Earth::ANGULAR_SPEED, 
         initialPosition, initialSpeed);
     RK4Solver solver(system, 30); 
 
-    
     std::ofstream trajectoryStream("trajectory.txt");
     std::ofstream radiotelescopesStream("telescopes.txt");
     
