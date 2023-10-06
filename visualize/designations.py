@@ -28,7 +28,7 @@ class DesignationsDrawer:
             if not data[id]['was']:
                 append(id, *[np.nan]*4)
             if len(data[id]['time']) > 2 and \
-                abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 0.1:
+                abs(data[id]['azimuth'][-1] - data[id]['azimuth'][-2]) > 18 / np.pi:
                 data[id]['azimuth'][-1] = np.nan
             if t != t_group:
                 for _id in data:
@@ -49,8 +49,8 @@ class DesignationsDrawer:
             axs[2].plot(t, data[id]['angle'])
             axs[2].set_title("Angle")
 
-            axs[0].set(ylabel='meters')
-            axs[1].set(ylabel='radians')
-            axs[2].set(ylabel='radians')
+            axs[0].set(ylabel='km')
+            axs[1].set(ylabel='degrees')
+            axs[2].set(ylabel='degrees')
 
             axs[2].set(xlabel='time')

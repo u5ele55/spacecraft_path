@@ -6,8 +6,14 @@
 #include <cmath>
 #include <iostream>
 
-RadioTelescopeSystem::RadioTelescopeSystem(std::vector<RadioTelescope> radiotelescopes)
-    : rdts(radiotelescopes)
+RadioTelescopeSystem::RadioTelescopeSystem(
+    std::vector<RadioTelescope> radiotelescopes,
+    bool convertToDegrees,
+    bool convertToKm
+)   
+:   rdts(radiotelescopes), 
+    convertToDegrees(convertToDegrees), 
+    convertToKm(convertToKm)
 {
     for(int i = 0; i < rdts.size(); i ++)
         rdtsECEF.push_back(blh2ecef(rdts[i].getBLH()));
@@ -31,15 +37,16 @@ std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
                 continue;
             }
             // acos is an angle between vector and plane
-            double angle = acos(cosAngle);
+            double angle = M_PI_2 - acos(cosAngle);
             if (angle > rdts[rInd].getAngle()) {
                 // could be seen!
-                double azimuth = calculateAzimuth(ecef, rtCoord); // TODO 
+                double azimuth = calculateAzimuth(ecef, rtCoord); 
+                double distance = sqrt(distanceSqr); // in meters
                 designations.push_back({
                     (double)rInd, 
-                    sqrt(distanceSqr),
-                    azimuth,
-                    angle
+                    convertToKm ? std::round(distance) / 1000.0 : distance,
+                    convertToDegrees ? azimuth * 180 / M_PI : azimuth,
+                    convertToDegrees ? angle * 180 / M_PI : angle 
                 });
             }
         }

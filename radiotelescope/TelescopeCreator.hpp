@@ -6,7 +6,7 @@
 
 class TelescopeCreator {
 public:
-    TelescopeCreator(const std::string &filename, bool inRadians = false);
+    TelescopeCreator(const std::string &filename, bool givenInRadians = false);
     ~TelescopeCreator();
     std::vector<RadioTelescope> create();
 private:

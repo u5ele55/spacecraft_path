@@ -45,7 +45,7 @@ int main() {
     // output radiotelescopes coords
     TelescopeCreator rdtCreator("../radiotelescopes.txt");
     std::vector<RadioTelescope> rdts = rdtCreator.create();
-    RadioTelescopeSystem radioSystem(rdts);
+    RadioTelescopeSystem radioSystem(rdts, true, true);
     
     radiotelescopesStream << rdts.size() << '\n';
     
