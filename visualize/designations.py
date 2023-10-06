@@ -39,7 +39,7 @@ class DesignationsDrawer:
             data[id]['was'] = True
         
         for id in data:
-            t = data[id]['time']
+            t = np.array(data[id]['time']) / 3600.0 
             fig, axs = plt.subplots(3, sharex=True)
             fig.suptitle(f'Station {id} designations')
             axs[0].plot(t, data[id]['dist'])
@@ -53,4 +53,4 @@ class DesignationsDrawer:
             axs[1].set(ylabel='degrees')
             axs[2].set(ylabel='degrees')
 
-            axs[2].set(xlabel='time')
+            axs[2].set(xlabel='time, hours')

@@ -13,8 +13,8 @@ class TrajectoryDrawer:
 
     def draw(self, ax):
         data = self.fileTrajectory.read().split('\n')
-        xs,ys,zs = [], [], []
-        xd,yd,zd = [], [], []
+        xs,ys,zs = [], [], [] # ECI
+        xd,yd,zd = [], [], [] # ECEF
         cnt = 0
         
         for c in data[:-1]:
@@ -37,32 +37,38 @@ class TrajectoryDrawer:
         ax.set_ylim3d(l, u)
         ax.set_zlim3d(l, u)
 
-        ax.plot(xs, ys, zs, label='SC trajectory ecef', c='#FF0000')
+        # ECI trajectory
+        ax.plot(xs, ys, zs, label='SC trajectory eci', c='#FF0000')
+        ax.scatter(xs[0], ys[0], zs[0], label='Start', c='#FFFF00')
 
         # trasse
-
         if not self.drawTrasse:
             return
 
-        plt.figure()
+        fig = plt.figure()
+        ax = fig.add_subplot()
         img = plt.imread("/home/vshaganov/work/map.jpg")
-        plt.imshow(img, extent=[-np.pi/2, np.pi/2, -np.pi/2, np.pi/2])
-        xs = np.array(xs)
-        ys = np.array(ys)
-        zs = np.array(zs)
+        plt.imshow(img, extent=[-180, 180, -180, 180])
+        ax.set_aspect("auto")
 
-        r = np.sqrt(xs**2 + ys**2 + zs**2)
-        r1 = np.sqrt(xs**2 + y**2)
+        xd = np.array(xd)
+        yd = np.array(yd)
+        zd = np.array(zd)
 
+        r1 = np.sqrt(xd**2 + yd**2)
         alpha = 1/298.257
-        phi = np.arcsin(zs / np.sqrt((1-alpha)**2 * r1**2 + z**2))
-        lmbd = np.arctan(ys/xs)
+        phi = np.arcsin(zd / np.sqrt((1-alpha)**2 * r1**2 + zd**2)) * 180 / np.pi
+        lmbd = np.arctan(yd/xd) * 180 / np.pi
 
         # discontinuities
         for i in range(len(lmbd)-1): 
             if lmbd[i] - lmbd[i+1] > 0:
                 lmbd[i] = np.nan
 
-        plt.plot(lmbd, phi)
+        ax.plot(lmbd, phi)
+        ax.scatter(lmbd[0], phi[0], label='start', c="#00FF00")
+        ax.scatter(lmbd[-1], phi[-1], label='end', c='#FF0000')
+        ax.legend()
+        
 
 #ax.plot(xs, ys, zs, label='SC trajectory eci')

@@ -56,7 +56,8 @@ int main() {
     std::cout << "Start time: " << secsToTime(unixTimestamp) << '\n';
     
     double step = 100;
-    for (int i = 0; i < 60001; i += step) {
+    int hour = 3600;
+    for (int i = 0; i <= 11 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
