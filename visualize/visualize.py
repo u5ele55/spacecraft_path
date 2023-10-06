@@ -8,7 +8,7 @@ MINOR_AXIS = 6356752.3142;
 
 if __name__ == '__main__':
     ax = plt.figure(1).add_subplot(projection='3d')
-    trdr = TrajectoryDrawer(r"trajectory.txt")
+    trdr = TrajectoryDrawer(r"trajectory.txt", MINOR_AXIS, MAJOR_AXIS)
     geoidDr = GeoidDrawer(MINOR_AXIS, MAJOR_AXIS)
     radioDr = TelescopesDrawer(r"telescopes.txt")
     desDr = DesignationsDrawer(r"designations.txt")
