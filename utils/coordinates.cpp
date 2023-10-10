@@ -41,16 +41,20 @@ Vector eci2ecef(double x, double y, double z, Vector currentTime)
 Vector myEci2ecef(double x, double y, double z, Vector currentTime)
 {
     double hrs = currentTime[3], mns = currentTime[4], scs = currentTime[5];
-    double UT = ((hrs * 60 + mns) * 60 + scs) / Constants::Common::SECONDS_IN_DAY * 2 * M_PI;
+    double UT = (hrs * 60 + mns) * 60 + scs;
     long long d = dateToJd(currentTime) - 2451545;
     double t = d / 36525.0;
-    std::cout << d << ' ' << t << ' ';
-    double S_0 = (
-        (6 * 60 + 41)*60 + 50.54841 + 8640184.812866 * t + 0.093104 * t*t - 6.2e-6 * t*t*t
-        ) / Constants::Common::SECONDS_IN_DAY * 2 * M_PI;
+    // std::cout << d << ' ' << t << ' ';
+    double S_0 = 
+        (6 * 60 + 41)*60 + 50.54841 
+        + 8640184.812866 * t + 0.093104 * t*t 
+        - 6.2e-6 * t*t*t;
     std::cout << S_0 << ' ' << UT << '-';
-    double S = S_0 + UT;
-    std::cout << S << '\n';
+    double S = S_0 + (1.00273790935 + 5.9e-11 * t) * UT;
+    S = 2 * M_1_PI / Constants::Common::SECONDS_IN_DAY * S;
+
+    // double dT = dateToJd(currentTime) - 2451545;
+    // double S = (360.9856123035484 * dT+280.46) / 180 * M_PI;
 
     // rotation matrix for greenwich and absolute geocentric convertion
     double a = cos(S), b = sin(S);
