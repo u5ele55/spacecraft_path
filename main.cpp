@@ -57,7 +57,7 @@ int main() {
     
     double step = 100;
     int hour = 3600;
-    for (int i = 0; i <= 4 * hour; i += step) {
+    for (int i = 0; i <= 11 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
@@ -65,6 +65,7 @@ int main() {
 
         currentTime = unixToTime(t);
         Vector ecef = myEci2ecef(x,y,z, currentTime);
+        // Vector ecef = eci2ecef(x,y,z, currentTime);
         // std::cout << ecef << "=" << myEci2ecef(x,y,z, currentTime) << '\n';
         
         trajectoryStream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
