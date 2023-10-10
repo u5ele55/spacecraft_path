@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector.hpp"
 
-Vector secsToTime(long long secs);
+Vector unixToTime(long long secs);
 Vector TTUT(Vector currentTime);
-long long dateToSecs(Vector time);
+long long dateToUnix(Vector time);
+double dateToJd(Vector date);
+long long timeToSecs(Vector time);

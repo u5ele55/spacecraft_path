@@ -39,6 +39,8 @@ class TrajectoryDrawer:
         ax.set_ylim3d(l, u)
         ax.set_zlim3d(l, u)
 
+
+        ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#0000FF')
         # ECI trajectory
         ax.plot(xs, ys, zs, label='SC trajectory eci', c='#FF0000')
         ax.scatter(xs[0], ys[0], zs[0], label='Start', c='#FFFF00')
