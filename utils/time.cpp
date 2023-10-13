@@ -57,8 +57,3 @@ double dateToJd(Vector date)
     double JD = JDN + (h-12) / 24.0 + m / 1440.0 + s / 86400.0;
     return JD;
 }
-
-long long timeToSecs(Vector time)
-{
-    dateToUnix(time);
-}
