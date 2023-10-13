@@ -51,7 +51,7 @@ class TrajectoryDrawer:
 
         fig = plt.figure()
         ax = fig.add_subplot()
-        img = plt.imread("/home/vshaganov/work/map.jpg")
+        img = plt.imread("../visualize/map.jpg")
         plt.imshow(img, extent=[-180, 180, -90, 90])
         ax.set_aspect("auto")
 
