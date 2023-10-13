@@ -50,7 +50,7 @@ int main() {
 
     std::cout << "Start time: " << unixToTime(unixTimestamp) << '\n';
     
-    double step = 30;
+    double step = 90;
     int hour = 3600;
 
     Output::RadioVisibilityZones rvz("radiozones.txt", solver, radioSystem, unixTimestamp, rdts.size(), step);

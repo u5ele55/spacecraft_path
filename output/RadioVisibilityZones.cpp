@@ -1,6 +1,8 @@
 #include "RadioVisibilityZones.hpp"
 #include "../utils/time.hpp"
 #include "../utils/coordinates.hpp"
+
+#include <iostream>
 #include <map>
 
 Output::RadioVisibilityZones::RadioVisibilityZones(
@@ -18,7 +20,10 @@ Output::RadioVisibilityZones::RadioVisibilityZones(
     statuses(stationsQuantity), 
     step(step)
     {
-        file << "Station\tStatus\tTime\n";
+        file << "St\tTransition\tTime\n";
+        for(int i = 0; i < stationsQuantity; i ++) {
+            statuses[i] = {-1, Status::Out};
+        }
     }
 
 Output::RadioVisibilityZones::~RadioVisibilityZones()
@@ -41,85 +46,59 @@ void Output::RadioVisibilityZones::recordTelescope(int index, double time, int d
         status = Status::InVisibilityZone;
         break;
     }
-    if (statuses[index].size() == 0) {
-        statuses[index].push_back({time, status});
+    if (statuses[index].time == -1) {
+        statuses[index] = {time, status};
         return;
     }
 
-    auto prevState = statuses[index][statuses[index].size()-1];
+    auto prevState = statuses[index];
 
     if (prevState.status != status) {
-        statuses[index].push_back({time, status});
-        output(time, status, index);
-    } 
-    // else {
-    //     double left = time-step < 0 ? 0 : time-step;
-    //     switch (status)
-    //     {
-    //     case Status::LeaveRadiozone:
-    //         // Must enter radiozone
-    //         time = bSearch(left, time, index, 0, 1);
-    //         status = time ? Status::EnterRadiozone : status;
-    //         break;
-    //     case Status::EnterRadiozone:
-    //         // Must enter visibility zone
-    //         time = bSearch(left, time, index, 1, 4);
-    //         status = time ? Status::EnterVisibilityZone : status;
-    //         break;
-    //     case Status::EnterVisibilityZone:
-    //         // Must leave visibility zone
-    //         time = bSearch(left, time, index, 4, 1);
-    //         status = time ? Status::LeaveVisibilityZone : status;
-    //         break;
-    //     case Status::LeaveVisibilityZone:
-    //         // Must leave radiozone
-    //         time = bSearch(left, time, index, 1, 0);
-    //         status = time ? Status::LeaveRadiozone : status;
-    //         break;
-    //     }
-    // }
-}
+        double left = time-step < 0 ? 0 : time-step;
+        Transition transition;
+        if (prevState.status == Status::Out) {
+            // must be in radiozone
+            if (status != Status::InRadiozone) {
+                std::cout << "Radiozone is calculated incorrectly: Out->InRZ\n";
+            }
+            time = bSearch(left, time, index, 0, 1);
+            transition = Transition::EnterRadiozone;
+        }
+        else if (prevState.status == Status::InRadiozone) {
+            // could be out or in visibility zone
+            if (status == Status::Out) {
+                time = bSearch(left, time, index, 1, 0);
+                transition = Transition::LeaveRadiozone;
+            } else if (status == Status::InVisibilityZone) {
+                time = bSearch(left, time, index, 1, 4);
+                transition = Transition::EnterVisibilityZone;
+            } else {
+                std::cout << "Radiozone is calculated incorrectly: InRZ->smth\n";
+            }
+        } 
+        else {
+            // in visibility zone => must be in radiozone
+            if (status != Status::InRadiozone) {
+                std::cout << "Radiozone is calculated incorrectly: InVZ->InRZ\n";
+            }
+            time = bSearch(left, time, index, 4, 1);
+            transition = Transition::LeaveVisibilityZone;
+        }
 
-#include <iostream>
+        statuses[index] = {time, status};
+        output(time, transition, index);
+    } 
+    
+}
 
 double Output::RadioVisibilityZones::bSearch(double left, double right, int index, int negative, int positive) {
     double mid;
-    auto pos = solver.solve(right);
-    auto ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + right));
-    auto designationSize = radioSystem.targetTelescope(ecef, index).size();
 
-    if (designationSize == negative) {
-        return 0;
-    }
-
-    while (designationSize != positive) {
-        mid = (right + left) / 2;
-        pos = solver.solve(mid);
-        ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + mid));
-        designationSize = radioSystem.targetTelescope(ecef, index).size();
-        if (designationSize == negative) {
-            left = mid;
-        } else {
-            right = mid;
-        }
-        std::cout << mid << ' ' << right << ' ' << left << ' ' 
-                  << '|' << negative << "->" << positive << " ! " << designationSize << '\n';
-    }
-
-    std::cout << "stopped 1wh " << designationSize << '=' << positive << '\n';
-    pos = solver.solve(left);
-    ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + left));
-    designationSize = radioSystem.targetTelescope(ecef, index).size();
-    std::cout << "l:" << designationSize << ' ';
-    pos = solver.solve(right);
-    ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + right));
-    designationSize = radioSystem.targetTelescope(ecef, index).size();
-    std::cout << "r:" << designationSize << ' ';
     while (right - left > 1) {
         mid = (right + left) / 2;
-        pos = solver.solve(mid);
-        ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + mid));
-        designationSize = radioSystem.targetTelescope(ecef, index).size();
+        auto const& pos = solver.solve(mid);
+        auto const& ecef = myEci2ecef(pos[1], pos[3], pos[5], unixToTime(startUnixTimestamp + mid));
+        auto const& designationSize = radioSystem.targetTelescope(ecef, index).size();
         if (designationSize == negative) {
             left = mid;
         } else if (designationSize == positive) {
@@ -131,15 +110,16 @@ double Output::RadioVisibilityZones::bSearch(double left, double right, int inde
     return left;
 }
 
-void Output::RadioVisibilityZones::output(double time, Status status, int index)
+void Output::RadioVisibilityZones::output(double time, Transition status, int index)
 {
-    static std::map<Status, std::string> statusToStr = {
-        {Status::InRadiozone, "RZ"},
-        {Status::InVisibilityZone, "VZ"},
-        {Status::Out, "OUT"},
+    static std::map<Transition, std::string> statusToStr = {
+        {Transition::EnterRadiozone, "Enter RZ"},
+        {Transition::EnterVisibilityZone, "Enter VZ"},
+        {Transition::LeaveRadiozone, "Leave RZ"},
+        {Transition::LeaveVisibilityZone, "Leave VZ"},
     };
-    Vector utc_time = unixToTime(startUnixTimestamp + time);
     file << index << "\t" << statusToStr[status] << '\t';
+    Vector utc_time = unixToTime(startUnixTimestamp + time);
     for (int i = 0; i < 5; i ++) {
         file << utc_time[i] << "-";
     }

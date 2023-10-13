@@ -13,6 +13,9 @@ namespace Output
     enum class Status {
         InRadiozone, InVisibilityZone, Out
     };
+    enum class Transition {
+        EnterRadiozone, EnterVisibilityZone, LeaveVisibilityZone, LeaveRadiozone 
+    };
     struct state {
         double time;
         Status status;
@@ -31,11 +34,11 @@ namespace Output
         AbstractSolver &solver;
         RadioTelescopeSystem &radioSystem;
         std::ofstream file;
-        std::vector<std::vector<state>> statuses;
+        std::vector<state> statuses;
         double startUnixTimestamp;
         double step;
     private:
-        void output(double time, Status status, int index);
+        void output(double time, Transition status, int index);
         double bSearch(double left, double right, int index, int negative, int positive);
     };
     
