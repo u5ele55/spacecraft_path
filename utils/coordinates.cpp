@@ -1,7 +1,6 @@
 #include "coordinates.hpp"
 #include "constants.hpp"
 #include "time.hpp"
-#include "sofa/sofa.h"
 
 Vector blh2ecef(const Vector &blh)
 {
@@ -20,18 +19,28 @@ Vector blh2ecef(const Vector &blh)
     return ecef;
 }
 
-Vector eci2ecef(double x, double y, double z, Vector currentTime)
+Vector myEci2ecef(double x, double y, double z, Vector currentTime)
 {
-    static double rotateMatrix[3][3];
+    double hrs = currentTime[3], mns = currentTime[4], scs = currentTime[5];
+    double UT = (hrs * 60 + mns) * 60 + scs;
     
-    Vector ttut = TTUT(currentTime);
+    long long d = dateToJd(currentTime) - 2451545;
+    double t = d / 36525.0;
+    
+    double S_0 = 
+        (6 * 60 + 41)*60 + 50.54841 
+        + 8640184.812866 * t + 0.093104 * t*t 
+        - 6.2e-6 * t*t*t;
 
-    iauC2t06a(ttut[0], ttut[1], ttut[2], ttut[3], 0, 0, rotateMatrix);
-    Vector ecef = {
-        x * rotateMatrix[0][0] + y * rotateMatrix[1][0] + z * rotateMatrix[2][0],
-        x * rotateMatrix[0][1] + y * rotateMatrix[1][1] + z * rotateMatrix[2][1],
-        x * rotateMatrix[0][2] + y * rotateMatrix[1][2] + z * rotateMatrix[2][2]
-    };
+    double S = S_0 + (1.00273790935 + 5.9e-11 * t) * UT;
+    S *= 2 * M_PI / Constants::Common::SECONDS_IN_DAY;
 
-    return ecef;
+    // rotation matrix for greenwich and absolute geocentric convertion
+    double a = cos(S), b = sin(S);
+    double X, Y, Z = z;
+    
+    X = a*x + b*y;
+    Y = a*y - b*x;
+    
+    return {X, Y, Z};
 }

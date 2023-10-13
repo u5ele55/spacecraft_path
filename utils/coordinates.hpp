@@ -3,3 +3,4 @@
 
 Vector blh2ecef(const Vector &blh);
 Vector eci2ecef(double x, double y, double z, Vector currentTime);
+Vector myEci2ecef(double x, double y, double z, Vector currentTime);

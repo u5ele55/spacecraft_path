@@ -39,6 +39,8 @@ class TrajectoryDrawer:
         ax.set_ylim3d(l, u)
         ax.set_zlim3d(l, u)
 
+
+        #ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#0000FF')
         # ECI trajectory
         ax.plot(xs, ys, zs, label='SC trajectory eci', c='#FF0000')
         ax.scatter(xs[0], ys[0], zs[0], label='Start', c='#FFFF00')
@@ -49,7 +51,7 @@ class TrajectoryDrawer:
 
         fig = plt.figure()
         ax = fig.add_subplot()
-        img = plt.imread("/home/vshaganov/work/map.jpg")
+        img = plt.imread("../visualize/map.jpg")
         plt.imshow(img, extent=[-180, 180, -90, 90])
         ax.set_aspect("auto")
 
@@ -64,7 +66,7 @@ class TrajectoryDrawer:
 
         # discontinuities
         for i in range(len(lmbd)-1): 
-            if lmbd[i] - lmbd[i+1] > 0:
+            if lmbd[i] - lmbd[i+1] > np.pi:
                 lmbd[i] = np.nan
 
         lmbd *= 180 / np.pi

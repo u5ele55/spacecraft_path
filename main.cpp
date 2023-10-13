@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <cmath>
-
-#include "sofa/sofa.h"
 
 #include "utils/Vector.hpp"
 #include "utils/constants.hpp"
@@ -20,7 +19,7 @@
 #include "output/RadioStationsDesignations.hpp"
 
 int main() {
-    const double JD = 2460206.883;
+    const double JD = 2460206.383;
     const double unixTimestamp = (JD - 2440587.5) * Constants::Common::SECONDS_IN_DAY;
     
     Vector currentTime(7);
@@ -52,18 +51,18 @@ int main() {
         radiotelescopesStream << blh2ecef( rdts[i].getBLH() ) << '\n';
     }
 
-    std::cout << "Start time: " << secsToTime(unixTimestamp) << '\n';
+    std::cout << std::fixed << std::setprecision(10) << "Start time: " << unixToTime(unixTimestamp) << '\n';
     
     double step = 100;
     int hour = 3600;
-    for (int i = 0; i <= 24 * hour; i += step) {
+    for (int i = 0; i <= 48 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];
         long long t = i + unixTimestamp;
 
-        currentTime = secsToTime(t);
-        Vector ecef = eci2ecef(x,y,z, currentTime);
+        currentTime = unixToTime(t);
+        Vector ecef = myEci2ecef(x,y,z, currentTime);
         
         trajectoryStream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
         trajectoryStream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
