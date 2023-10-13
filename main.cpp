@@ -3,8 +3,6 @@
 #include <iomanip>
 #include <cmath>
 
-#include "sofa/sofa.h"
-
 #include "utils/Vector.hpp"
 #include "utils/constants.hpp"
 #include "utils/time.hpp"

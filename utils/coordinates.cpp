@@ -1,7 +1,6 @@
 #include "coordinates.hpp"
 #include "constants.hpp"
 #include "time.hpp"
-#include "sofa/sofa.h"
 
 Vector blh2ecef(const Vector &blh)
 {
@@ -19,24 +18,6 @@ Vector blh2ecef(const Vector &blh)
     };
     return ecef;
 }
-
-Vector eci2ecef(double x, double y, double z, Vector currentTime)
-{
-    static double rotateMatrix[3][3];
-    
-    Vector ttut = TTUT(currentTime);
-
-    iauC2t06a(ttut[0], ttut[1], ttut[2], ttut[3], 0, 0, rotateMatrix);
-    Vector ecef = {
-        x * rotateMatrix[0][0] + y * rotateMatrix[1][0] + z * rotateMatrix[2][0],
-        x * rotateMatrix[0][1] + y * rotateMatrix[1][1] + z * rotateMatrix[2][1],
-        x * rotateMatrix[0][2] + y * rotateMatrix[1][2] + z * rotateMatrix[2][2]
-    };
-
-    return ecef;
-}
-
-#include <iostream>
 
 Vector myEci2ecef(double x, double y, double z, Vector currentTime)
 {
