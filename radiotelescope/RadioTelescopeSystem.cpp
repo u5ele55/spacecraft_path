@@ -19,37 +19,53 @@ RadioTelescopeSystem::RadioTelescopeSystem(
         rdtsECEF.push_back(blh2ecef(rdts[i].getBLH()));
 }
 
-std::vector<Vector> RadioTelescopeSystem::targetTelescopes(Vector ecef)
-{
+Vector RadioTelescopeSystem::targetTelescope(const Vector& ecef, int index) {
+    if (index < 0 || index > rdts.size()) {
+        throw std::invalid_argument("index is an index of radio station");
+    }
     // simplicified to sphere
-    double maxDistanceSqr = ecef.dot(ecef) - Constants::Earth::MINOR_AXIS;
+    double maxDistanceSqr = ecef.dot(ecef) - Constants::Earth::MINOR_AXIS * Constants::Earth::MINOR_AXIS;
+
+    const auto& rtCoord = rdtsECEF[index];
+    auto r = ecef - rtCoord;
+    double distanceSqr = r.dot(r);
+    if (distanceSqr < maxDistanceSqr) {
+        // find angle between RT plane and vector between RT and satellite
+        double cosAngle = r.dot(rtCoord) / sqrt(r.dot(r) * rtCoord.dot(rtCoord));
+        // std::cout << "cos: " << cosAngle << '\n';
+        if (cosAngle < 0) {
+            return {};
+        }
+        // acos is an angle between vector and plane
+        double angle = M_PI_2 - acos(cosAngle);
+        if (angle > rdts[index].getAngle()) {
+            // could be seen!
+            double azimuth = calculateAzimuth(ecef, rtCoord); 
+            double distance = sqrt(distanceSqr); // in meters
+            return {
+                (double)index, 
+                convertToKm ? std::round(distance) / 1000.0 : distance,
+                convertToDegrees ? azimuth * 180 / M_PI : azimuth,
+                convertToDegrees ? angle * 180 / M_PI : angle 
+            };
+        } else {
+            // just in radiozone
+            return {(double)index};
+        }
+    }
+    return {}; // 
+}
+
+std::vector<Vector> RadioTelescopeSystem::targetTelescopes(const Vector& ecef)
+{
     std::vector<Vector> designations; // in format {r_id, dist, azimuth, angle}
 
     for (int rInd = 0; rInd < rdts.size(); rInd ++) {
-        const auto& rtCoord = rdtsECEF[rInd];
-        auto r = ecef - rtCoord;
-        double distanceSqr = r.dot(r);
-        if (distanceSqr < maxDistanceSqr) {
-            // find angle between RT plane and vector between RT and satellite
-            double cosAngle = r.dot(rtCoord) / sqrt(r.dot(r) * rtCoord.dot(rtCoord));
-            // std::cout << "cos: " << cosAngle << '\n';
-            if (cosAngle < 0) {
-                continue;
-            }
-            // acos is an angle between vector and plane
-            double angle = M_PI_2 - acos(cosAngle);
-            if (angle > rdts[rInd].getAngle()) {
-                // could be seen!
-                double azimuth = calculateAzimuth(ecef, rtCoord); 
-                double distance = sqrt(distanceSqr); // in meters
-                designations.push_back({
-                    (double)rInd, 
-                    convertToKm ? std::round(distance) / 1000.0 : distance,
-                    convertToDegrees ? azimuth * 180 / M_PI : azimuth,
-                    convertToDegrees ? angle * 180 / M_PI : angle 
-                });
-            }
+        const auto &des = targetTelescope(ecef, rInd);
+        if (des.size() != 4) {
+            continue;
         }
+        designations.push_back(des);
     }
     return designations;
 }

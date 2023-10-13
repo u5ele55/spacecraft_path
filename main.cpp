@@ -37,8 +37,6 @@ int main() {
     std::ofstream trajectoryStream("trajectory.txt");
     std::ofstream radiotelescopesStream("telescopes.txt");
     
-    Output::RadioVisibilityZones rvz("radiozones.txt");
-    Output::RadioStationsDesignations rsd("designations.txt");
     
     // output radiotelescopes coords
     TelescopeCreator rdtCreator("../radiotelescopes.txt");
@@ -46,15 +44,18 @@ int main() {
     RadioTelescopeSystem radioSystem(rdts, true, true);
     
     radiotelescopesStream << rdts.size() << '\n';
-    
     for (int i = 0; i < rdts.size(); i ++) {
         radiotelescopesStream << blh2ecef( rdts[i].getBLH() ) << '\n';
     }
 
-    std::cout << std::fixed << std::setprecision(10) << "Start time: " << unixToTime(unixTimestamp) << '\n';
+    std::cout << "Start time: " << unixToTime(unixTimestamp) << '\n';
     
-    double step = 100;
+    double step = 30;
     int hour = 3600;
+
+    Output::RadioVisibilityZones rvz("radiozones.txt", solver, radioSystem, unixTimestamp, rdts.size(), step);
+    Output::RadioStationsDesignations rsd("designations.txt");
+    
     for (int i = 0; i <= 48 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
@@ -67,14 +68,13 @@ int main() {
         trajectoryStream << state[1] << ' ' << state[3] << ' ' << state[5] << '\n';
         trajectoryStream << ecef[0] <<" "<< ecef[1] <<" "<< ecef[2] << '\n';
 
-        auto designations = radioSystem.targetTelescopes(ecef);
-        if (!designations.empty()) {
-            rvz.setTime(currentTime);
-            for (const auto& des : designations) {
-                rvz.addToZone(des[0]);
-                rsd.output(i, des);
+        for (int r = 0; r < rdts.size(); r ++) {
+            const auto& designation = radioSystem.targetTelescope(ecef, r);
+            int desSize = designation.size();
+            rvz.recordTelescope(r, time, desSize);
+            if (desSize == 4) {
+                rsd.output(i, designation);
             }
-            rvz.output();
         }
     }
 
