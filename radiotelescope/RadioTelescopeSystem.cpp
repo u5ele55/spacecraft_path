@@ -79,7 +79,17 @@ double RadioTelescopeSystem::calculateAzimuth(Vector r_sat, Vector r_st)
 
     // Projection of satellite on a station plane
     auto l_p = r_sat - normalVector*k;
-    Vector north = {0,0,1};
+    Vector north(3);
+
+    if (r_st[2] == 0) {
+        north = {0,0,1};
+    } else if (r_st[2] < 0) {
+        double z_north_intersect = r_st.dot(r_st) / r_st[2];
+        north = r_st - Vector{0, 0, z_north_intersect};
+    } else {
+        double z_north_intersect = r_st.dot(r_st) / r_st[2];
+        north = Vector{0, 0, z_north_intersect} - r_st;
+    }
 
     double cosAzimuth = l_p[2] / sqrt(l_p.dot(l_p));
 
