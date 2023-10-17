@@ -10,8 +10,17 @@ class TrajectoryDrawer:
         self.a = a # MAJOR AXIS
         self.b = b # MINOR AXIS
 
-    def prepareTrasse(self):
+    def prepareTrasse(self, telescopesFile: str):
         self.drawTrasse = True
+        self.telescopes = []
+
+        dataTelescopes = open(telescopesFile, 'r').read().split('\n')
+        N = int(dataTelescopes[0])
+
+        for i in range(1,N+1):
+            print(dataTelescopes[i])
+            p,l,h,angle = [float(a) for a in dataTelescopes[i].split()]
+            self.telescopes.append((p,l,h))
 
     def draw(self, ax):
         data = self.fileTrajectory.read().split('\n')
@@ -55,6 +64,7 @@ class TrajectoryDrawer:
         plt.imshow(img, extent=[-180, 180, -90, 90])
         ax.set_aspect("auto")
 
+
         xd = np.array(xd)
         yd = np.array(yd)
         zd = np.array(zd)
@@ -71,9 +81,15 @@ class TrajectoryDrawer:
 
         lmbd *= 180 / np.pi
         phi *= 180 / np.pi
+
         ax.plot(lmbd, phi)
         ax.scatter(lmbd[0], phi[0], label='start', c="#00FF00")
         ax.scatter(lmbd[-1], phi[-1], label='end', c='#FF0000')
+
+        # telescopes
+        for p, l, a in self.telescopes:
+            ax.scatter(l, p, c='#FF00FF')
+        
         ax.legend()
         
 
