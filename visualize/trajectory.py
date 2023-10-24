@@ -92,5 +92,3 @@ class TrajectoryDrawer:
         
         ax.legend()
         
-
-#ax.plot(xs, ys, zs, label='SC trajectory eci')

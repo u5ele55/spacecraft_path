@@ -9,12 +9,12 @@ Vector blh2ecef(const Vector &blh)
     
     double r = Constants::Earth::MINOR_AXIS / Constants::Earth::MAJOR_AXIS;
     double e2 = 1 - r*r;
-    double N = Constants::Earth::MAJOR_AXIS / sqrt(1 - e2 * sin_l*sin_l);
+    double N = Constants::Earth::MAJOR_AXIS / sqrt(1 - e2 * sin_b*sin_b);
 
     Vector ecef = {
-        (N + h) * cos_l * cos_b,
-        (N + h) * cos_l * sin_b,
-        ((1 - e2)*N + h) * sin_l
+        (N + h) * cos_b * cos_l,
+        (N + h) * cos_b * sin_l,
+        ((1 - e2)*N + h) * sin_b
     };
     return ecef;
 }
