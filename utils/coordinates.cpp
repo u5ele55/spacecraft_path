@@ -32,8 +32,8 @@ Vector myEci2ecef(double x, double y, double z, Vector currentTime)
         + 8640184.812866 * t + 0.093104 * t*t 
         - 6.2e-6 * t*t*t;
 
-    double S = S_0 + (1.00273790935 + 5.9e-11 * t) * UT;
-    S *= 2 * M_PI / Constants::Common::SECONDS_IN_DAY;
+    double S = S_0 + UT;
+    S *= Constants::Earth::ANGULAR_SPEED;
 
     // rotation matrix for greenwich and absolute geocentric convertion
     double a = cos(S), b = sin(S);
