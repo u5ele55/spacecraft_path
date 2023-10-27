@@ -87,8 +87,11 @@ class TrajectoryDrawer:
         ax.scatter(lmbd[-1], phi[-1], label='end', c='#FF0000')
 
         # telescopes
+        i = 0
         for p, l, a in self.telescopes:
             ax.scatter(l, p, c='#FF00FF')
+            ax.annotate(i, (l, p), c='#FFFFFF')
+            i += 1
         
         ax.legend()
         
