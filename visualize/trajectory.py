@@ -22,7 +22,7 @@ class TrajectoryDrawer:
             p,l,h,angle = [float(a) for a in dataTelescopes[i].split()]
             self.telescopes.append((p,l,h))
 
-    def draw(self, ax):
+    def draw(self, ax, inECEF = False, telescopesECEFFile = None):
         data = self.fileTrajectory.read().split('\n')
         xs,ys,zs = [], [], [] # ECI
         xd,yd,zd = [], [], [] # ECEF
@@ -50,9 +50,21 @@ class TrajectoryDrawer:
 
 
         #ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#0000FF')
-        # ECI trajectory
-        ax.plot(xs, ys, zs, label='SC trajectory eci', c='#FF0000')
-        ax.scatter(xs[0], ys[0], zs[0], label='Start', c='#FFFF00')
+        if inECEF:
+            # ECI trajectory
+            ax.plot(xd, yd, zd, label='SC trajectory ecef', c='#FF0000')
+            ax.scatter(xd[0], yd[0], zd[0], label='Start', c='#FFFF00')
+            if telescopesECEFFile:
+                ecefTscp = open(telescopesECEFFile, 'r').read().split('\n')
+                N = int(ecefTscp[0])
+
+                for i in range(1,N+1):
+                    X,Y,Z = [float(a) for a in ecefTscp[i][1:-1].split()]
+                    ax.scatter(X, Y, Z, label='', c='#FF00FF')
+        else:
+            # ECI trajectory
+            ax.plot(xs, ys, zs, label='SC trajectory eci', c='#FF0000')
+            ax.scatter(xs[0], ys[0], zs[0], label='Start', c='#FFFF00')
 
         # trasse
         if not self.drawTrasse:

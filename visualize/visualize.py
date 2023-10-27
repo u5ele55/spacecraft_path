@@ -13,8 +13,10 @@ if __name__ == '__main__':
 
     geoidDr.draw(ax)
     trdr.prepareTrasse(r"../radiotelescopes.txt")
-    trdr.draw(ax)
+    inECEF = False
+    trdr.draw(ax, inECEF, r"telescopes.txt")
 
-    desDr.draw()
+    withDiscontinuties = False
+    desDr.draw(withDiscontinuties)
 
     plt.show()

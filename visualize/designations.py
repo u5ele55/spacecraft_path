@@ -6,7 +6,7 @@ class DesignationsDrawer:
     def __init__(self, designationsFilename):
         self.file = open(designationsFilename, 'r')
     
-    def draw(self):
+    def draw(self, withDiscontinuties):
         filedata = self.file.read().split('\n')
         
         data = {}
@@ -38,14 +38,15 @@ class DesignationsDrawer:
             append(id, t,dist,azm,ang)
         
         # include discontinuties
-        for id in data:
-            t_idx = len(data[id]['time']) - 1
-            while t_idx != 1:
-                if data[id]['time'][t_idx] - data[id]['time'][t_idx-1] != dt:
-                    append(id, *[np.nan]*4, t_idx)
-                elif abs(data[id]['azimuth'][t_idx] - data[id]['azimuth'][t_idx-1]) > 18 / np.pi:
-                    data[id]['azimuth'][t_idx] = np.nan
-                t_idx -= 1
+        if withDiscontinuties:
+            for id in data:
+                t_idx = len(data[id]['time']) - 1
+                while t_idx != 1:
+                    if data[id]['time'][t_idx] - data[id]['time'][t_idx-1] != dt:
+                        append(id, *[np.nan]*4, t_idx)
+                    elif abs(data[id]['azimuth'][t_idx] - data[id]['azimuth'][t_idx-1]) > 18 / np.pi:
+                        data[id]['azimuth'][t_idx] = np.nan
+                    t_idx -= 1
 
         for id in data:
             t = np.array(data[id]['time']) / 3600.0 
