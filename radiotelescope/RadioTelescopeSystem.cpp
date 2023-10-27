@@ -29,15 +29,16 @@ Vector RadioTelescopeSystem::targetTelescope(const Vector& ecef, int index) {
     const auto& rtCoord = rdtsECEF[index];
     auto r = ecef - rtCoord;
     double distanceSqr = r.dot(r);
+
     if (distanceSqr < maxDistanceSqr) {
         // find angle between RT plane and vector between RT and satellite
         double cosAngle = r.dot(rtCoord) / sqrt(r.dot(r) * rtCoord.dot(rtCoord));
-        // std::cout << "cos: " << cosAngle << '\n';
         if (cosAngle < 0) {
             return {};
         }
         // acos is an angle between vector and plane
         double angle = M_PI_2 - acos(cosAngle);
+        
         if (angle > rdts[index].getAngle()) {
             // could be seen!
             double azimuth = calculateAzimuth(ecef, rtCoord); 

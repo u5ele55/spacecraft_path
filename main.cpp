@@ -23,16 +23,17 @@ int main() {
     const double unixTimestamp = (JD - 2440587.5) * Constants::Common::SECONDS_IN_DAY;
     
     Vector currentTime(7);
-    //ecef - 7144843.808, 217687.110, -506463.296        562.650611, -1616.516697, 7358.157263
-    //eci - 2937656.611, 14432705.729, -20836304.223        -2408.799, 2723.781, 1545.981
-    Vector initialPosition = {2937656.611, 14432705.729, -20836304.223};
-    Vector initialSpeed = {-2408.799, 2723.781, 1545.981};
+    
+    Vector initialPosition = {6372257.364, 0.0, 0.0};
+    Vector initialSpeed = {0.0, 3956.48275399774, 6852.829149194119};
+
+
 
     auto *system = new SpacecraftECI(
         Constants::Earth::GEOCENTRIC_GRAVITATION_CONSTANT,
         Constants::Earth::ANGULAR_SPEED, 
         initialPosition, initialSpeed);
-    RK4Solver solver(system, 30); 
+    RK4Solver solver(system, 10); 
 
     std::ofstream trajectoryStream("trajectory.txt");
     std::ofstream radiotelescopesStream("telescopes.txt");
@@ -50,13 +51,13 @@ int main() {
 
     std::cout << "Start time: " << unixToTime(unixTimestamp) << '\n';
     
-    double step = 90;
+    double step = 30;
     int hour = 3600;
 
     Output::RadioVisibilityZones rvz("radiozones.txt", solver, radioSystem, unixTimestamp, rdts.size(), step);
     Output::RadioStationsDesignations rsd("designations.txt");
     
-    for (int i = 0; i <= 48 * hour; i += step) {
+    for (int i = 0; i <= 2 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];

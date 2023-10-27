@@ -105,6 +105,7 @@ double Output::RadioVisibilityZones::bSearch(double left, double right, int inde
             right = mid;
         } else {
             std::cout << "OOps!!!... " << negative << "->" << positive << " ! " << designationSize << '\n';
+            right = mid;
         }
     }
     return left;
