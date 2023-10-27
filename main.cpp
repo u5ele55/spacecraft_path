@@ -24,10 +24,8 @@ int main() {
     
     Vector currentTime(7);
     
-    Vector initialPosition = {6372257.364, 0.0, 0.0};
-    Vector initialSpeed = {0.0, 3956.48275399774, 6852.829149194119};
-
-
+    Vector initialPosition = {6871257.864, 0.0, 0.0};
+    Vector initialSpeed = {0.0, 3810.1125727278977, 6599.308558521686};
 
     auto *system = new SpacecraftECI(
         Constants::Earth::GEOCENTRIC_GRAVITATION_CONSTANT,
@@ -57,7 +55,7 @@ int main() {
     Output::RadioVisibilityZones rvz("radiozones.txt", solver, radioSystem, unixTimestamp, rdts.size(), step);
     Output::RadioStationsDesignations rsd("designations.txt");
     
-    for (int i = 0; i <= 2 * hour; i += step) {
+    for (int i = 0; i <= 1.75 * hour; i += step) {
         double time = i;
         Vector state = solver.solve(time);
         double x = state[1], y = state[3], z = state[5];

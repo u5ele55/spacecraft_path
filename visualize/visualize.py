@@ -16,7 +16,7 @@ if __name__ == '__main__':
     inECEF = False
     trdr.draw(ax, inECEF, r"telescopes.txt")
 
-    withDiscontinuties = False
+    withDiscontinuties = True
     desDr.draw(withDiscontinuties)
 
     plt.show()
